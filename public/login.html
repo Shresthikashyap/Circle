@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Group Chat App</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="app-name">Circle.</h1>
+        <form onsubmit="save(event)" class="form-submit">
+            <br>
+            <h2>Log in </h2>
+            <div id="general-error" class="general-error-message"></div>
+            <br>            
+            <div class="row">
+                <label for="email" class="form-label">E mail:</label>
+                <input type="email" class="form-control" placeholder="Enter your email" id="email" required>
+                <div id="email-error" class="field-error"></div>
+            </div>
+            
+            <div class="row">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" class="form-control" placeholder="Enter your password" id="password" required>
+                <div id="password-error" class="field-error"></div>
+            </div>
+            <br>
+            <div class="row">
+                <button type="submit" class="btn btn-success">Log in</button>
+            </div>
+            <br>
+        
+            <a href="./signup.html">Sign up</a> into your new account
+            <br> <br>
+          </form>
+
+</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.2/axios.min.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <script src="./js/login.js"></script>
+</html>

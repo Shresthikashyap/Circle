@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Group Chat App</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/group-chat.css" />
+
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Left Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="user-info">
+            <div class="user-avatar" id="userAvatar"></div>
+            <div class="user-details">
+              <h3 id="userName">Loading...</h3>
+              <p>Online</p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button
+              class="btn"
+              onclick="showNewGroupModal()"
+              title="Create New Group"
+            >
+              <i class="fas fa-plus"></i>
+            </button>
+            <button class="btn" onclick="signOut()" title="Sign Out">
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="search-container">
+          <div class="search-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search groups..."
+              id="groupSearch"
+              oninput="filterGroups()"
+            />
+          </div>
+        </div>
+
+        <div class="groups-list" id="groupsList">
+          <!-- Groups will be populated here dynamically -->
+        </div>
+      </div>
+
+      <!-- Main Chat Area -->
+      <div class="main-chat">
+        <!-- No Group Selected State -->
+        <div class="no-group-selected" id="noGroupSelected">
+          <div class="welcome-icon">
+            <i class="fas fa-comments"></i>
+          </div>
+          <div class="welcome-title">Welcome to Group Chat</div>
+          <div class="welcome-subtitle">
+            Select a group from the sidebar to start chatting
+          </div>
+        </div>
+
+        <!-- Chat Interface (initially hidden) -->
+        <div class="chat-interface" id="chatInterface">
+          <div class="chat-header">
+            <div class="chat-info">
+              <div>
+                <h2 id="currentGroupName">Select a group</h2>
+                <div class="chat-status" id="chatStatus">No group selected</div>
+                <div id="inviteLink" class="invite-link" style="display: none">
+                  <div
+                    class="invite-link-text"
+                    id="inviteLinkText"
+                    onclick="copyInviteLink()"
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="chat-actions">
+              <button
+                class="btn"
+                onclick="toggleDetailsPanel()"
+                title="Group Details"
+              >
+                <i class="fas fa-info-circle"></i>
+              </button>
+            </div> -->
+            <div class="chat-actions">
+              <button
+                class="btn"
+                onclick="copyInviteLink()"
+                title="Share Invite Link"
+              >
+                <i class="fas fa-share-alt"></i> Invite
+              </button>
+              <button
+                class="btn"
+                onclick="toggleDetailsPanel()"
+                title="Group Info"
+              >
+                <i class="fas fa-info-circle"></i> Info
+              </button>
+            </div>
+          </div>
+
+          <div class="messages-container" id="messagesContainer">
+            <!-- Messages will be populated here dynamically -->
+          </div>
+
+          <div class="chat-input-container">
+            <div class="error-message" id="errorMessage"></div>
+            <form onsubmit="sendMessage(event)">
+              <div class="chat-input-wrapper">
+                <input
+                  type="file"
+                  id="myfile"
+                  accept="*/*"
+                  onchange="handleFileSelect(event)"
+                />
+                <button
+                  type="button"
+                  class="paperclip-btn"
+                  onclick="document.getElementById('myfile').click()"
+                  title="Attach File"
+                >
+                  <i class="fas fa-paperclip"></i>
+                </button>
+                <input
+                  type="text"
+                  class="chat-input"
+                  placeholder="Type a message..."
+                  id="messageInput"
+                  required
+                />
+                <div class="input-actions">
+                  <button type="submit" class="send-btn" title="Send Message">
+                    <i class="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Panel -->
+      <div class="details-panel" id="detailsPanel">
+        <div class="details-header">
+          <h3>Group Details</h3>
+          <button class="close-details" onclick="toggleDetailsPanel()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="details-content">
+          <!-- Group Banner -->
+          <div class="group-banner">
+            <div class="group-banner-avatar" id="groupBannerAvatar">G</div>
+            <div class="group-banner-title" id="groupBannerTitle">
+              Select a group
+            </div>
+            <!-- <div class="group-banner-subtitle" id="groupBannerSubtitle">
+              Group information will appear here
+            </div> -->
+            <div class="group-stats">
+              <div class="group-stat">
+                <span class="group-stat-number" id="memberCount">0</span>
+                <span class="group-stat-label">Members</span>
+              </div>
+              <div class="group-stat">
+                <span class="group-stat-number" id="onlineCount">0</span>
+                <span class="group-stat-label">Online</span>
+              </div>
+              <!-- <div class="group-stat">
+                <span class="group-stat-number" id="messageCount">0</span>
+                <span class="group-stat-label">Messages</span>
+              </div> -->
+            </div>
+          </div>
+
+          <!-- Members Section -->
+          <div class="details-section">
+            <h4>
+              <div class="section-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              Members
+            </h4>
+            <div id="membersList">
+              <!-- Members will be populated here -->
+            </div>
+          </div>
+
+          <!-- Shared Files Section -->
+          <div class="details-section">
+            <h4>
+              <div class="section-icon">
+                <i class="fas fa-file"></i>
+              </div>
+              Shared Files
+            </h4>
+            <div id="filesList">
+              <!-- Files will be populated here -->
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <i class="fas fa-file"></i>
+                </div>
+                <div class="empty-state-text">No files shared yet</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions Section -->
+          <div class="details-section" id="groupActions">
+            <h4>
+              <div class="section-icon">
+                <i class="fas fa-cog"></i>
+              </div>
+              Actions
+            </h4>
+            <div class="action-buttons" id="actionButtons">
+              <!-- Action buttons will be populated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay -->
+      <div class="overlay" id="overlay" onclick="closeDetailsPanel()"></div>
+    </div>
+
+    <!-- New Group Modal -->
+    <div class="modal" id="newGroupModal">
+      <div class="modal-content">
+        <div class="modal-header">Create New Group</div>
+        <form onsubmit="createNewGroup(event)">
+          <div class="form-group">
+            <label class="form-label" for="groupName">Group Name:</label>
+            <input
+              type="text"
+              class="form-input"
+              id="groupName"
+              placeholder="Enter group name"
+              required
+            />
+          </div>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="modal-btn secondary"
+              onclick="closeNewGroupModal()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="modal-btn primary">
+              Create Group
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.2/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <script src="./js/group-chat.js"></script>
+ 
+  </body>
+</html>
