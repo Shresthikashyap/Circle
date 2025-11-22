@@ -306,6 +306,18 @@
         // document.getElementById("chatStatus").textContent =
         //   onlineUsersInRoom > 0 ? `${onlineUsersInRoom} Online` : "";
 
+        // const adminCheck = await axios.get(
+        //   `${apiUrl}/admin/checkadmin/${currentUserId}/${currentGroupId}`,
+        //   {
+        //     headers: { Authorization: token },
+        //   }
+        // );
+
+
+        // if( adminCheck.data.admin && adminCheck.data.admin.isAdmin === true){
+        //   document.getElementById("invite-link-btn").style.display = "block";
+        // }
+          
         console.log("Current user :", groupName, groupId);
         // Show chat interface
         document.getElementById("noGroupSelected").style.display = "none";
@@ -349,7 +361,7 @@
             const inviteLink = `${apiUrl}/signup.html?groupId=${currentGroupId}`;
             localStorage.setItem("link", inviteLink);
 
-            // document.getElementById("inviteLink").style.display = "block";
+            //document.getElementById("invite-link-btn").style.display = "block";
             // document.getElementById("inviteLinkText").textContent = inviteLink;
           } else {
             document.getElementById("inviteLink").style.display = "none";
@@ -1077,6 +1089,13 @@
       // Cleanup function to call when leaving the page
       window.addEventListener("beforeunload", () => {
         
+        if (socket && currentGroupId) {
+          socket.emit("leaveRoom", currentGroupId);
+          socket.disconnect();
+        }
+      });
+
+      window.addEventListener('unload', (event) => {
         if (socket && currentGroupId) {
           socket.emit("leaveRoom", currentGroupId);
           socket.disconnect();
