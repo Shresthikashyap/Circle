@@ -1,5 +1,3 @@
-//app.js
-
 const express = require('express');
 const bodyParser = require('body-parser'); 
 const sequelize = require('./util/database');
