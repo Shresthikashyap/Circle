@@ -21,25 +21,25 @@ const fileRoutes = require('./routes/group-files');
 
 var cors = require('cors');
 const app = express();
-const server = http.createServer(app);   // create a server instance
-//const io = socketio(server);         // initialize socket.io
+const server = http.createServer(app);   
+//const io = socketio(server);         
 const multer = require('multer');
 const upload = multer();
 
 require('dotenv').config({ path: './.env' });
 
 const io = socketio(server, {
-    path: '/socket.io',  // Optional: Set path explicitly to avoid issues
+    path: '/socket.io',  // Set path explicitly to avoid issues
     cors: {
-        origin: (process.env.API_URL || 'http://localhost:3000') ,  // Set your frontend URL here from the .env file
+        origin: (process.env.API_URL || 'http://localhost:3000') , 
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
         credentials: true,
         allowedHeaders: ['Authorization', 'Content-Type'],
     },
-    transports: ['websocket', 'polling']  // Ensure these transports are enabled
+    transports: ['websocket', 'polling']  
 });
 
-app.use(bodyParser.json());   // bodyParser.json is used to parse incoming HTTP request bodies that are in JSON format
+app.use(bodyParser.json());   
 app.use(bodyParser.urlencoded({extended: true}));  //entend: true => precises that the req.body object will contain values of any type instead of just strings
 //The extended option allows to choose between parsing the URL-encoded data with the querystring library (when false ) or the qs library (when true ).
 
@@ -66,20 +66,20 @@ app.get('/api/config', (req, res) => {
 
 app.get('/', (req, res) => {
     console.log('Serving login page');
-    res.sendFile(__dirname + '/public/login.html'); // Adjust the path if your file is located elsewhere
+    res.sendFile(__dirname + '/public/login.html'); 
 });
 
 app.use((req, res, next) => {
-    req.io = io; // Make io available to all routes
+    req.io = io; 
     next();
 });  
 app.use('/user',userRoutes);
 app.use('/message',chatRoutes);
 app.use('/group',groupRoutes);
 app.use('/admin',adminRoutes);
-app.use('/file', upload.single('myfile'),fileRoutes);  //single method is used when we want to handle the upload of a single file
+app.use('/file', upload.single('myfile'),fileRoutes); 
 
-User.belongsToMany(Group, { through: UserGroup }); //association means that a Many-To-Many relationship exists between User and Group
+User.belongsToMany(Group, { through: UserGroup }); 
 Group.belongsToMany(User, { through: UserGroup });
 
 User.hasMany(Message);
@@ -95,22 +95,21 @@ Group.hasMany(ArchievedMessage);
 
 const PORT = process.env.PORT || 3000;
 
-sequelize.sync()   // is a way to sync your sequelize model with your database table
-.then(()=>{        // force: true => recreate the database table , drop the existing ones
+sequelize.sync()   
+.then(()=>{       
     server.listen(PORT,()=>{
         console.log('server is listening');
     })
 
     let onlineUsers = {};
-    // When a user connects to the server, this function is called
+   
     io.on('connection',(socket) => {
         console.log('user connected');
 
-        // Listen for a 'joinRoom' event from the connected client
-        socket.on('joinRoom', (groupId) =>{              // When a 'joinRoom' event is received, this function is called
+        socket.on('joinRoom', (groupId) =>{              
 
             console.log('joining room:', groupId);
-            socket.join(groupId);                        // Join a specific room using the groupId provided
+            socket.join(groupId);                        
 
             // Initialize if needed
             if (!onlineUsers[groupId]) {
@@ -127,7 +126,6 @@ sequelize.sync()   // is a way to sync your sequelize model with your database t
             console.log(`Socket ${socket.id} leaving room: ${groupId}`);
             socket.leave(groupId);
             
-            // Clear the current room tracking
             if (socket.currentRoom === groupId) {
             socket.currentRoom = null;
             }
@@ -158,7 +156,7 @@ sequelize.sync()   // is a way to sync your sequelize model with your database t
     })
 
     //'0 0' represents midnight.
-    cron.schedule('0 0 * * *', async () => { // sets up a cron job that runs once a day at midnight (0 0 * * *) using the 'node-cron' library.
+    cron.schedule('0 0 * * *', async () => {
         try {
             
             const chats = await Message.findAll();
